@@ -4,11 +4,12 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="db61666a59444d73879720002de69444" Name="Diagram1">
+      <Diagram DiagramId="75e8c21e940748f5aa217d205f1399f9" Name="Diagram1">
         <EntityTypeShape EntityType="AssignmentDbModel.admin_details" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AssignmentDbModel.booking" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="AssignmentDbModel.cancellation" Width="1.5" PointX="5.25" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="AssignmentDbModel.train" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="AssignmentDbModel.User" Width="1.5" PointX="2.75" PointY="5.75" IsExpanded="true" />
         <AssociationConnector Association="AssignmentDbModel.FK__bookings__7167D3BD" ManuallyRouted="false" />
         <AssociationConnector Association="AssignmentDbModel.FK__cancellat__booki__753864A1" ManuallyRouted="false" />
         <AssociationConnector Association="AssignmentDbModel.FK__cancellations__74444068" ManuallyRouted="false" />

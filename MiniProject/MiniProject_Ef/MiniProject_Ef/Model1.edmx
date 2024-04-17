@@ -58,6 +58,14 @@
           <Property Name="Fare" Type="float" Nullable="false" />
           <Property Name="status" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+        </EntityType>
         <Association Name="FK__bookings__7167D3BD">
           <End Role="trains" Type="Self.trains" Multiplicity="0..1" />
           <End Role="bookings" Type="Self.bookings" Multiplicity="*" />
@@ -104,6 +112,7 @@
           <Parameter Name="class" Type="varchar" Mode="In" />
           <Parameter Name="date_of_travelling" Type="date" Mode="In" />
           <Parameter Name="total_seats" Type="int" Mode="In" />
+          <Parameter Name="totalamount" Type="float" Mode="InOut" />
         </Function>
         <Function Name="InsertCancellationAndUpdateTrainWithRefund" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="cancel_id" Type="int" Mode="In" />
@@ -114,11 +123,20 @@
           <Parameter Name="no_of_seats" Type="int" Mode="In" />
           <Parameter Name="remarks" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="RegisterUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Username" Type="nvarchar" Mode="In" />
+          <Parameter Name="Password" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="UserLogin" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Username" Type="nvarchar" Mode="In" />
+          <Parameter Name="Password" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="AssignmentDbModelStoreContainer">
           <EntitySet Name="admin_details" EntityType="Self.admin_details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="bookings" EntityType="Self.bookings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="cancellations" EntityType="Self.cancellations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="trains" EntityType="Self.trains" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__bookings__7167D3BD" Association="Self.FK__bookings__7167D3BD">
             <End Role="trains" EntitySet="trains" />
             <End Role="bookings" EntitySet="bookings" />
@@ -196,6 +214,14 @@
           <NavigationProperty Name="bookings" Relationship="Self.FK__bookings__7167D3BD" FromRole="trains" ToRole="bookings" />
           <NavigationProperty Name="cancellations" Relationship="Self.FK__cancellations__74444068" FromRole="trains" ToRole="cancellations" />
         </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
         <Association Name="FK__bookings__7167D3BD">
           <End Role="trains" Type="Self.train" Multiplicity="0..1" />
           <End Role="bookings" Type="Self.booking" Multiplicity="*" />
@@ -236,11 +262,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="AssignmentDbEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="AssignmentDbEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="admin_details" EntityType="Self.admin_details" />
           <EntitySet Name="bookings" EntityType="Self.booking" />
           <EntitySet Name="cancellations" EntityType="Self.cancellation" />
           <EntitySet Name="trains" EntityType="Self.train" />
+          <EntitySet Name="Users" EntityType="Self.User" />
           <AssociationSet Name="FK__bookings__7167D3BD" Association="Self.FK__bookings__7167D3BD">
             <End Role="trains" EntitySet="trains" />
             <End Role="bookings" EntitySet="bookings" />
@@ -253,12 +280,13 @@
             <End Role="trains" EntitySet="trains" />
             <End Role="cancellations" EntitySet="cancellations" />
           </AssociationSet>
-          <FunctionImport Name="InsertBookingAndUpdateTrainWithDates">
+          <FunctionImport Name="InsertBookingAndUpdateTrainWithDates" ReturnType="Collection(Double)">
             <Parameter Name="customername" Mode="In" Type="String" />
             <Parameter Name="train_no" Mode="In" Type="Int32" />
             <Parameter Name="class" Mode="In" Type="String" />
             <Parameter Name="date_of_travelling" Mode="In" Type="DateTime" />
             <Parameter Name="total_seats" Mode="In" Type="Int32" />
+            <Parameter Name="totalamount" Mode="InOut" Type="Double" />
           </FunctionImport>
           <FunctionImport Name="InsertCancellationAndUpdateTrainWithRefund">
             <Parameter Name="cancel_id" Mode="In" Type="Int32" />
@@ -269,13 +297,21 @@
             <Parameter Name="no_of_seats" Mode="In" Type="Int32" />
             <Parameter Name="remarks" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="RegisterUser" ReturnType="Collection(String)">
+            <Parameter Name="Username" Mode="In" Type="String" />
+            <Parameter Name="Password" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="UserLogin" ReturnType="Collection(String)">
+            <Parameter Name="Username" Mode="In" Type="String" />
+            <Parameter Name="Password" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="AssignmentDbModelStoreContainer" CdmEntityContainer="AssignmentDbEntities">
+        <EntityContainerMapping StorageEntityContainer="AssignmentDbModelStoreContainer" CdmEntityContainer="AssignmentDbEntities1">
           <EntitySetMapping Name="admin_details">
             <EntityTypeMapping TypeName="AssignmentDbModel.admin_details">
               <MappingFragment StoreEntitySet="admin_details">
@@ -332,8 +368,19 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="AssignmentDbModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="InsertBookingAndUpdateTrainWithDates" FunctionName="AssignmentDbModel.Store.InsertBookingAndUpdateTrainWithDates" />
           <FunctionImportMapping FunctionImportName="InsertCancellationAndUpdateTrainWithRefund" FunctionName="AssignmentDbModel.Store.InsertCancellationAndUpdateTrainWithRefund" />
+          <FunctionImportMapping FunctionImportName="RegisterUser" FunctionName="AssignmentDbModel.Store.RegisterUser" />
+          <FunctionImportMapping FunctionImportName="UserLogin" FunctionName="AssignmentDbModel.Store.UserLogin" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

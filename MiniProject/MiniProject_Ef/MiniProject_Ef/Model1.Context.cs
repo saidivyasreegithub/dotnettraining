@@ -15,10 +15,10 @@ namespace MiniProject_Ef
     using System.Data.Entity.Core.Objects;
     using System.Linq;
     
-    public partial class AssignmentDbEntities : DbContext
+    public partial class AssignmentDbEntities1 : DbContext
     {
-        public AssignmentDbEntities()
-            : base("name=AssignmentDbEntities")
+        public AssignmentDbEntities1()
+            : base("name=AssignmentDbEntities1")
         {
         }
     
@@ -31,8 +31,9 @@ namespace MiniProject_Ef
         public virtual DbSet<booking> bookings { get; set; }
         public virtual DbSet<cancellation> cancellations { get; set; }
         public virtual DbSet<train> trains { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     
-        public virtual int InsertBookingAndUpdateTrainWithDates(string customername, Nullable<int> train_no, string @class, Nullable<System.DateTime> date_of_travelling, Nullable<int> total_seats)
+        public virtual ObjectResult<Nullable<double>> InsertBookingAndUpdateTrainWithDates(string customername, Nullable<int> train_no, string @class, Nullable<System.DateTime> date_of_travelling, Nullable<int> total_seats, ObjectParameter totalamount)
         {
             var customernameParameter = customername != null ?
                 new ObjectParameter("customername", customername) :
@@ -54,7 +55,7 @@ namespace MiniProject_Ef
                 new ObjectParameter("total_seats", total_seats) :
                 new ObjectParameter("total_seats", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertBookingAndUpdateTrainWithDates", customernameParameter, train_noParameter, classParameter, date_of_travellingParameter, total_seatsParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("InsertBookingAndUpdateTrainWithDates", customernameParameter, train_noParameter, classParameter, date_of_travellingParameter, total_seatsParameter, totalamount);
         }
     
         public virtual int InsertCancellationAndUpdateTrainWithRefund(Nullable<int> cancel_id, Nullable<int> booking_id, string customer_name, string @class, Nullable<System.DateTime> cancel_date, Nullable<int> no_of_seats, string remarks)
@@ -88,6 +89,32 @@ namespace MiniProject_Ef
                 new ObjectParameter("remarks", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertCancellationAndUpdateTrainWithRefund", cancel_idParameter, booking_idParameter, customer_nameParameter, classParameter, cancel_dateParameter, no_of_seatsParameter, remarksParameter);
+        }
+    
+        public virtual ObjectResult<string> RegisterUser(string username, string password)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("Username", username) :
+                new ObjectParameter("Username", typeof(string));
+    
+            var passwordParameter = password != null ?
+                new ObjectParameter("Password", password) :
+                new ObjectParameter("Password", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("RegisterUser", usernameParameter, passwordParameter);
+        }
+    
+        public virtual ObjectResult<string> UserLogin(string username, string password)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("Username", username) :
+                new ObjectParameter("Username", typeof(string));
+    
+            var passwordParameter = password != null ?
+                new ObjectParameter("Password", password) :
+                new ObjectParameter("Password", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("UserLogin", usernameParameter, passwordParameter);
         }
     }
 }

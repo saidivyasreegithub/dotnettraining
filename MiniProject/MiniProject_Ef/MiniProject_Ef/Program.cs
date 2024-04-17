@@ -10,21 +10,96 @@ namespace MiniProject_Ef
 {
     class Program
     {
-        static AssignmentDbEntities db = new AssignmentDbEntities();
+        static AssignmentDbEntities1 db = new AssignmentDbEntities1();
         static void Main(string[] args)
         {
+            Console.WriteLine("Welcome To Indian Railway Reservation System");
+            Console.WriteLine("1. Admin -> Press 1");
+            Console.WriteLine("2. User -> Press 2");
+            Console.WriteLine("3. Exit -> Press 3");
+            Console.Write("YOUR CHOICE: ");
+            string choice = Console.ReadLine();
 
-            bool exit = false;
-            while (!exit)
+            switch (choice)
             {
-                Console.WriteLine("\t\t\t-------------------------Welcome to Indian Railways------------------------");
+                case "1":
+                    Admin();
+                    break;
+                case "2":
+                    UserMenu();
+                    break;
+                case "3":
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice.");
+                    break;
+            }
+        }
+        static void UserMenu()
+        {
+            Console.WriteLine("Enter Your User Details:");
+            Console.WriteLine("1. Existing User -> Press 1");
+            Console.WriteLine("2. New User -> Press 2");
+            Console.Write("YOUR CHOICE: ");
+            string userChoice = Console.ReadLine();
+
+            switch (userChoice)
+            {
+                case "1":
+                    ExistingUserLogin();
+                    break;
+                case "2":
+                    RegisterNewUser();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice.");
+                    break;
+            }
+        }
+
+        static void ExistingUserLogin()
+        {
+            Console.WriteLine("Enter your username:");
+            string username = Console.ReadLine();
+
+            Console.WriteLine("Enter your password:");
+            string password = Console.ReadLine();
+
+            User_option();
+        }
+
+        static void RegisterNewUser()
+        {
+            Console.WriteLine("Enter your username:");
+            string username = Console.ReadLine();
+
+            Console.WriteLine("Enter your password:");
+            string password = Console.ReadLine();
+
+
+            var newUser = new User { UserName = username, Password = password };
+            db.Users.Add(newUser);
+            db.SaveChanges();
+
+            Console.WriteLine("User registered successfully!");
+        }
+       
+
+        static void User_option()
+        {
+            bool exist = false;
+            while (!exist)
+            {
+                Console.WriteLine("---------------------------------------------------------------------------");
                 Console.WriteLine("1. View all trains");
                 Console.WriteLine("2. Book a ticket");
                 Console.WriteLine("3. Cancel a booking");
-                Console.WriteLine("4. Admin functions");
+                Console.WriteLine("4. show booking tickets");
                 Console.WriteLine("5. Exit");
                 Console.Write("Choose an option: ");
-                string choice = Console.ReadLine();
+               string choice = Console.ReadLine();
+                Console.WriteLine("---------------------------------------------------------------------------");
 
                 switch (choice)
                 {
@@ -38,30 +113,34 @@ namespace MiniProject_Ef
                         CancelBooking();
                         break;
                     case "4":
-                        AdminFunctions();
+                        ShowBookedTickets();
                         break;
                     case "5":
-                        exit = true;
+                        exist = true;
                         break;
                     default:
                         Console.WriteLine("Invalid option. Please try again.");
                         break;
                 }
-                Console.WriteLine("\t\t\t-----------------------------Thank you for visiting our website------------------------------");
-                Console.Read();
             }
         }
 
+
         static void ViewAllTrains()
         {
+
             var trains = db.trains.ToList();
             foreach (var train in trains)
             {
-                Console.WriteLine($"Train ID: {train.train_No}, Name: {train.train_name}, Departure: {train.departure_time}, Arrival: {train.arrival_time},");
+               
+                Console.WriteLine($"Train ID: {train.train_No}, |Name: {train.train_name},|Departure station:{train.departure_station},|Arrival station:{train.arrival_station},|Class:{train.Class},|Total seats:{train.total_seats}|Available seats:{train.available_seats},|Fare:{train.Fare}");
+               
             }
+
         }
         static void BookTicket()
         {
+
             try
             {
                 Console.WriteLine("Available Trains:");
@@ -91,7 +170,11 @@ namespace MiniProject_Ef
                     return;
                 }
 
-                var totalAmountParam = new SqlParameter("@Totalamount", SqlDbType.Float);
+
+                //var train2 = db.trains.FirstOrDefault(tc => tc.train_No == trainNo && tc.status == "Active");
+                //float totalamount = totalSeats * train.Fare;
+
+                var totalAmountParam = new SqlParameter("@totalamount", SqlDbType.Float);
                 totalAmountParam.Direction = ParameterDirection.Output;
 
                 var customerNameParam = new SqlParameter("@CustomerName", customerName);
@@ -104,6 +187,7 @@ namespace MiniProject_Ef
                     "EXEC InsertBookingAndUpdateTrainWithDates @CustomerName, @TrainNo, @Class, @DateOfTravel, @TotalSeats",
                     customerNameParam, trainNoParam, classParam, dateOfTravelParam, totalSeatsParam);
 
+
                 if (rowsAffected > 0)
                 {
                     var newBookingId = db.bookings
@@ -114,7 +198,9 @@ namespace MiniProject_Ef
                     if (newBookingId != 0)
                     {
                         Console.WriteLine($"Ticket booked successfully! Your booking ID is: {newBookingId}");
+                        Console.WriteLine($"Customer Name: {customerName}, Train No: {trainNo}, Class: {ticketClass}, Date of Travel: {dateOfTravel}, Total Amount: {totalAmountParam.Value}, Number of Seats: {totalSeats}");
                     }
+
                 }
                 else
                 {
@@ -125,33 +211,115 @@ namespace MiniProject_Ef
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
+
+            db.SaveChanges();
+            Console.WriteLine("---------------------------------------------------------------------------");
         }
+
+
+
+        static void ShowBookedTickets()
+        { 
+            Console.WriteLine("enter your booking id");
+            int bookingId = Convert.ToInt32(Console.ReadLine());
+            var bookedTickets = db.bookings.Where(bt => bt.booking_id == bookingId).ToList();
+
+
+            if (bookedTickets.Count == 0)
+            {
+                Console.WriteLine("No booked tickets found for the specified user.");
+                return;
+            }
+
+            Console.WriteLine("Booked Tickets:");
+            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine(" Train No  | Train Name       | customer name |date of travel    | Class  |Booking Date |");
+            Console.WriteLine("------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+            foreach (var ticket in bookedTickets)
+            {
+                var train = db.trains.FirstOrDefault(sa => sa.train_No == ticket.train_No);
+
+                Console.WriteLine($"|{ticket.train_No,-9} | {train.train_name,-15} | {ticket.Class,-6}  {ticket.data_of_booking,-21} |");
+            }
+
+            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------------------");
+        }
+
+
+
+
+
 
         static void CancelBooking()
         {
+            Console.WriteLine("---------------------------------------------------------------------------");
             try
             {
-                Console.Write("Enter booking ID to cancel: ");
-                int bookingId = int.Parse(Console.ReadLine());
 
+
+                Console.WriteLine("enter your booking id");
+                int bookingId = Convert.ToInt32(Console.ReadLine());
+                
                 var booking = db.bookings.FirstOrDefault(b => b.booking_id == bookingId);
+
                 if (booking == null)
                 {
-                    Console.WriteLine("Booking not found.");
+
+                    Console.WriteLine("No booked ticket for cancel, Please book the tickets");
+
                     return;
                 }
+                else 
+                {
+                    Console.WriteLine("Booking details:");
+                    Console.WriteLine($"Customer Name: {booking.customer_name}");
+                    Console.WriteLine($"Booking ID: {booking.booking_id}");
+                    Console.WriteLine($"Number of Tickets: {booking.total_seats}");
+                    Console.WriteLine($"Date of Travel: {booking.data_of_travelling}");
+                    Console.WriteLine($"Class:{booking.Class}");
+                    //double refundAmount = (double)0.0m;
+                    //decimal refundamount= (decimal)booking.total_amount * 0.75m; // Assuming 75% refund policy
+                    //Console.WriteLine($"Refund amount: {refundAmount}");
+                    ////double refund = (double)booking.total_amount * 0.75;
+                    //Console.WriteLine($"Refund Amount:{refundamount}");
 
-                // Implement cancellation logic here
+                    // Add cancelled ticket to the database
+                    var cancelledTicket = new cancellation
+                    {
+                        booking_id = bookingId, // Assuming canceledId is PNR
+                        customer_name = booking.customer_name,
+                        train_No = booking.train_No,
+                        cancel_date = DateTime.Now,
+                        //refund = (int?)refundAmount
+                    };
+                   
+                    db.cancellations.Add(cancelledTicket);
+                    // Retrieve the train entity including the available_seats property
+                    
+                    
+                    db.SaveChanges();
 
-                Console.WriteLine("Cancellation successful!");
+                    // Remove booked ticket from the database
+                    db.bookings.Remove(booking);
+
+
+                    Console.WriteLine("Refund amount will be refunded soon!");
+                    Console.WriteLine("Cancellation successful!");
+                }   
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error cancelling booking: {ex.Message}");
             }
+            Console.WriteLine("---------------------------------------------------------------------------");
+            
         }
-        static void AdminFunctions()
+        
+        
+        static void Admin()
         {
+            Console.WriteLine("---------------------------------------------------------------------------");
             Console.Write("Enter username: ");
             string username = Console.ReadLine();
 
@@ -169,13 +337,16 @@ namespace MiniProject_Ef
 
                 Console.WriteLine("Admin login successful.");
             }
+            Console.WriteLine("---------------------------------------------------------------------------");
             AdminMenu();
+
         }
 
         private static void AdminMenu()
         {
             while (true)
             {
+                Console.WriteLine("---------------------------------------------------------------------------");
                 Console.WriteLine("Admin Menu:");
                 Console.WriteLine("1. Add Train");
                 Console.WriteLine("2. Modify Train");
@@ -203,14 +374,17 @@ namespace MiniProject_Ef
                         break;
                     default:
                         Console.WriteLine("Invalid choice. Please select a valid option.");
-                        break;
+                      
+                     break;
                 }
+                Console.WriteLine("---------------------------------------------------------------------------");
             }
         }
 
         private static void AddTrain()
         {
 
+            Console.WriteLine("---------------------------------------------------------------------------");
             Console.WriteLine("Enter train details:");
 
             Console.Write("Train No: ");
@@ -269,9 +443,11 @@ namespace MiniProject_Ef
             {
                 Console.WriteLine($"Error adding train: {ex.Message}");
             }
+            Console.WriteLine("---------------------------------------------------------------------------");
         }
         private static void ModifyTrain()
         {
+            Console.WriteLine("---------------------------------------------------------------------------");
             Console.Write("Enter the Train No of the train you want to modify: ");
             int trainNo = Convert.ToInt32(Console.ReadLine());
 
@@ -318,10 +494,12 @@ namespace MiniProject_Ef
             db.SaveChanges();
 
             Console.WriteLine("Train modified successfully!");
+            Console.WriteLine("---------------------------------------------------------------------------");
         }
 
         public static void DeleteTrain()
         {
+            Console.WriteLine("---------------------------------------------------------------------------");
             Console.Write("Enter Train No of the train you want to deactivate: ");
             int trainNo = Convert.ToInt32(Console.ReadLine());
 
@@ -334,6 +512,7 @@ namespace MiniProject_Ef
             }
             else
             {
+                Console.WriteLine("Do you want to deactive the train (y/n)");
                 train.status = "deactive";
             }
 
@@ -347,6 +526,7 @@ namespace MiniProject_Ef
             {
                 Console.WriteLine($"Error deactivating train: {ex.Message}");
             }
+            Console.WriteLine("---------------------------------------------------------------------------");
         }
     }
 }
