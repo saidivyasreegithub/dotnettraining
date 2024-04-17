@@ -99,7 +99,7 @@ namespace MiniProject_Ef
                 Console.WriteLine("5. Exit");
                 Console.Write("Choose an option: ");
                string choice = Console.ReadLine();
-                Console.WriteLine("---------------------------------------------------------------------------");
+                
 
                 switch (choice)
                 {
@@ -125,19 +125,26 @@ namespace MiniProject_Ef
             }
         }
 
-
         static void ViewAllTrains()
         {
-
             var trains = db.trains.ToList();
+
+            // Print header
+            Console.WriteLine("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine("| Train ID |       Name                |          Departure Station |          Arrival Station |       Class   |    Total Seats |    Available Seats |   Fare   |");
+            Console.WriteLine("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+            // Print train details
             foreach (var train in trains)
             {
-               
-                Console.WriteLine($"Train ID: {train.train_No}, |Name: {train.train_name},|Departure station:{train.departure_station},|Arrival station:{train.arrival_station},|Class:{train.Class},|Total seats:{train.total_seats}|Available seats:{train.available_seats},|Fare:{train.Fare}");
-               
+                Console.WriteLine($"| {train.train_No,-9} |            {train.train_name,-16} |          {train.departure_station,-17} |       {train.arrival_station,-15} |    {train.Class,-9} | {train.total_seats,-11} |   {train.available_seats,-15} |  {train.Fare,-9} |");
             }
 
+            // Print footer
+            Console.WriteLine("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         }
+
+       
         static void BookTicket()
         {
 
@@ -161,6 +168,15 @@ namespace MiniProject_Ef
                     Console.WriteLine("Invalid date format. Please enter date in yyyy-MM-dd format.");
                     return;
                 }
+                var todayDate = DateTime.Today;
+                if (dateOfTravel <= todayDate)
+                {
+                    Console.WriteLine("Error: Date of travel must be greater than today's date.");
+                    return;
+                }
+                
+               
+               
 
                 Console.Write("Enter the total number of seats: ");
                 int totalSeats;
