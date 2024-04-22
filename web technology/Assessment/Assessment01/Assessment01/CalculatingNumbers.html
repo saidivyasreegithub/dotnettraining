@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Calculating The Two Numbers</title>
+</head>
+<body>
+    <form id="calculateNumbers">
+        <fieldset>
+            <label for="Number1">1st  Number:</label>
+            <input type="number" id="Number1" name="Number1" required>
+            <br>
+            <br>
+            <label for="Number2">2nd  Number:</label>
+            <input type="number" id="Number2" name="Number2" required>
+            <br>
+            <br>
+            <button type="button" onclick="multiply()">Multiply</button>
+            <button type="button" onclick="divide()">Divide</button>
+
+            <p id="result"> The Result is:</p>
+
+        </fieldset>
+    </form>
+
+    <script>
+        function multiply() {
+            var Number1 = parseFloat(document.getElementById('Number1').value);
+            var Number2 = parseFloat(document.getElementById('Number2').value);
+            var result = Number1 * Number2;
+            document.getElementById('result').innerHTML = "Multiplication of Number1 and Number2 is :" + result;
+        }
+        function divide() {
+            var Number1 = parseFloat(document.getElementById('Number1').value);
+            var Number2 = parseFloat(document.getElementById('Number2').value);
+            if (Number2 !== 0) {
+                var result = Number1 / Number2;
+                document.getElementById('result').innerHTML = "Division of Number1 and Number2 is : " + result;
+            }
+            else {
+                document.getElementById('result').innerHTML = "Cannot divide by zero!";
+            }
+
+        }
+    </script>
+
+</body>
+</html>
