@@ -1,0 +1,12 @@
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\bin\Debug\Mini_Project.exe.config
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\bin\Debug\Mini_Project.exe
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\bin\Debug\Mini_Project.pdb
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\bin\Debug\EntityFramework.dll
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\bin\Debug\EntityFramework.SqlServer.dll
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\bin\Debug\EntityFramework.xml
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\bin\Debug\EntityFramework.SqlServer.xml
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\obj\Debug\Mini_Project.csproj.AssemblyReference.cache
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\obj\Debug\Mini_Project.csproj.CoreCompileInputs.cache
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\obj\Debug\Mini_Project.csproj.CopyComplete
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\obj\Debug\Mini_Project.exe
+C:\dotnet\mini_Project\Mini_Project\Mini_Project\obj\Debug\Mini_Project.pdb
