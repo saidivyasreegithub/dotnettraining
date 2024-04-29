@@ -1,0 +1,28 @@
+﻿GermanCustomers.cshtml--
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>German Customers</title>
+</head>
+<body>
+    <div>
+        <h2>German Customers</h2>
+        <table>
+            <tr>
+                <th>Customer ID</th>
+                <th>Company Name</th>
+                <!-- Add other required columns -->
+            </tr>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.CustomerID</td>
+                    <td>@customer.CompanyName</td>
+                    <!-- Add other required columns -->
+                </tr>
+       }
+        </table>
+    </div>
+</body>
+</html>

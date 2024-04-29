@@ -1,0 +1,31 @@
+﻿@model Assessment01.Models.MoviedbEntities
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.MovieName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MovieName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DateOfRelease)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DateOfRelease)
+        </dd>
+    </dl>
+</div>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Mid }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

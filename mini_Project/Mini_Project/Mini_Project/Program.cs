@@ -48,7 +48,7 @@ namespace Mini_Project
                     break;
             }
             Console.Clear();
-
+            Console.WriteLine("Thank you visit again!...");
         }
         static void UserMenu()
         {
@@ -130,6 +130,8 @@ namespace Mini_Project
 
             Console.WriteLine("|                            User Options                         |");
             Console.WriteLine("-------------------------------------------------------------------");
+            Console.WriteLine("Welcome User");
+            Console.WriteLine("Here ur options");
             bool exist = false;
             while (!exist)
             {
